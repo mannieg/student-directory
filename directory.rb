@@ -24,7 +24,7 @@ end
 
 def print(students)
     students.each_with_index do |student, index|
-        puts "#{index}.#{student[:name]} (#{student[:cohort]} cohort)" if student[:name].each_char.first.include? 'J'
+        puts "#{index}.#{student[:name]} (#{student[:cohort]} cohort)" if student[:name].length < 12
     end
 end
 
