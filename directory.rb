@@ -57,9 +57,7 @@ def input_students
     country_of_birth = STDIN.gets.chomp
     puts "What is #{name}'s height".center(CEN, ' ')
     height = STDIN.gets.chomp
-    @students << {name: name, cohort: cohort, country_of_birth: country_of_birth,
-                  height: height}
-
+    add_student(name, cohort, country_of_birth, height)
     puts "Now we have #{@students.count} student#{@students.count > 1 ? 's' : ''}".center(CEN, ' ')
     puts "Please provide student name or enter to exit".center(CEN, ' ')
     name = STDIN.gets.chomp
@@ -71,10 +69,15 @@ def get_cohort # Recursion if wrong input detected
   cohort = STDIN.gets.chomp.to_sym
   cohort = :July if cohort.empty? # Default cohort if input empty
   if !COHORT_SYMBOLS.include? cohort
-    puts("Unrecognized cohort name..").center(CEN, ' ')
-    get_cohort
+    puts "Unrecognized cohort name..".center(CEN, ' ')
+    cohort = get_cohort
   end
   return cohort
+end
+
+def add_student(name, cohort, country_of_birth, height)
+  @students << {name: name, cohort: cohort,
+                country_of_birth: country_of_birth, height: height}
 end
 
 def print_header
@@ -100,8 +103,7 @@ def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort, country_of_birth, height = line.chomp.split(',') # Parallel assignment :)
-    @students << {name: name, cohort: cohort.to_sym,
-                  country_of_birth: country_of_birth, height: height}
+    add_student(name, cohort, country_of_birth, height)
   end
   file.close
 end
