@@ -22,6 +22,8 @@ def process(selection)
       show_students
     when "3"
       save_students
+    when "4"
+      load_students
     when "9"
       exit
     else
@@ -33,6 +35,7 @@ def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
+  puts "4. Load the list from students.csv"
   puts "9. Exit"
 end
 
@@ -54,10 +57,8 @@ def input_students
     country_of_birth = gets.chomp
     puts "What is #{name}'s height".center(CEN, ' ')
     height = gets.chomp
-    puts "What is #{name}'s hobbies".center(CEN, ' ')
-    hobbies = gets.chomp
     @students << {name: name, cohort: cohort, country_of_birth: country_of_birth,
-                  height: height, hobbies: hobbies}
+                  height: height}
 
     puts "Now we have #{@students.count} student#{@students.count > 1 ? 's' : ''}".center(CEN, ' ')
     puts "Please provide student name or enter to exit".center(CEN, ' ')
@@ -95,12 +96,22 @@ def print_footer
     puts "Overall, we have #{@students.count} great student#{@students.count > 1 ? 's' : ''}".center(CEN, ' ')
 end
 
+def load_students
+  file = File.open("students.csv", "r")
+  file.readlines.each do |line|
+    name, cohort, country_of_birth, height = line.chomp.split(',') # Parallel assignment :)
+    @students << {name: name, cohort: cohort.to_sym,
+                  country_of_birth: country_of_birth, height: height}
+  end
+  file.close
+end
+
 def save_students
   file = File.open("students.csv", "w")
 
   @students.each do |student|
     student_data = [student[:name], student[:cohort], student[:country_of_birth],
-                    student[:height], student[:hobbies]]
+                    student[:height]]
     csv_line = student_data.join(",")
     file.puts csv_line
   end
