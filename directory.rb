@@ -10,7 +10,7 @@ CEN = 50
 def interactive_menu
   loop do
     print_menu
-    process(gets.chomp)
+    process(STDIN.gets.chomp)
   end
 end
 
@@ -49,26 +49,26 @@ def input_students
   puts "Please enter the names of the students".center(CEN, ' ')
   puts "To finish, just hit return twice".center(CEN, ' ')
 
-  name = gets.gsub("\n","") # Using gsub instead of chomp
+  name = STDIN.gets.gsub("\n","") # Using gsub instead of chomp
 
   while !name.empty? do
     cohort = get_cohort
     puts "What is #{name}'s country of birth".center(CEN, ' ')
-    country_of_birth = gets.chomp
+    country_of_birth = STDIN.gets.chomp
     puts "What is #{name}'s height".center(CEN, ' ')
-    height = gets.chomp
+    height = STDIN.gets.chomp
     @students << {name: name, cohort: cohort, country_of_birth: country_of_birth,
                   height: height}
 
     puts "Now we have #{@students.count} student#{@students.count > 1 ? 's' : ''}".center(CEN, ' ')
     puts "Please provide student name or enter to exit".center(CEN, ' ')
-    name = gets.chomp
+    name = STDIN.gets.chomp
   end
 end
 
 def get_cohort # Recursion if wrong input detected
   puts "Please provide the cohort for this student".center(CEN, ' ')
-  cohort = gets.chomp.to_sym
+  cohort = STDIN.gets.chomp.to_sym
   cohort = :July if cohort.empty? # Default cohort if input empty
   if !COHORT_SYMBOLS.include? cohort
     puts("Unrecognized cohort name..").center(CEN, ' ')
@@ -96,8 +96,8 @@ def print_footer
     puts "Overall, we have #{@students.count} great student#{@students.count > 1 ? 's' : ''}".center(CEN, ' ')
 end
 
-def load_students
-  file = File.open("students.csv", "r")
+def load_students(filename = "students.csv")
+  file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort, country_of_birth, height = line.chomp.split(',') # Parallel assignment :)
     @students << {name: name, cohort: cohort.to_sym,
@@ -118,4 +118,17 @@ def save_students
   file.close
 end
 
+def try_load_students
+  filename = ARGV.first
+  return if filename.nil? # leave method if nil
+  if File.exists?(filename)
+    load_students(filename)
+    puts "Loaded #{@students.count} from #{filename}"
+  else
+    puts "Sorry, #{filename} doesn't exist."
+    exit # exit program
+  end
+end
+
+try_load_students
 interactive_menu
