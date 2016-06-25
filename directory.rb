@@ -59,8 +59,7 @@ def print(students)
 end
 
 def print_footer(students)
-    puts "Overall, we have #{students.count} great student".center(CEN, ' ') +
-         "#{students.count > 1 ? 's' : ''}"
+    puts "Overall, we have #{students.count} great student#{students.count > 1 ? 's' : ''}".center(CEN, ' ')
 end
 
 students = input_students
