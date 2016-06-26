@@ -1,3 +1,4 @@
+require 'CSV'
 @students = []
 COHORT_SYMBOLS = [:January, :February, :March, :April, :May, :June, :July,
                   :August, :September, :October, :November, :December]
@@ -101,25 +102,30 @@ def student_count
 end
 
 def load_students(filename = "students.csv")
-  File.open(filename, "r") do |file|
-    file.readlines.each do |line|
-      name, cohort, country_of_birth, height = line.chomp.split(',') # Parallel assignment :)
-      add_student(name, cohort, country_of_birth, height)
-    end
+  filename = file_empty(filename)
+  CSV.foreach(filename) do |row|
+    add_student(row[0], row[1], row[2], row[3])
   end
   puts "#{filename} has been loaded into memory"
 end
 
-def save_students(filename = "students.csv")
-  File.open(filename, "w") do |file|
+def save_students(filename)
+filename = file_empty(filename)
+  CSV.open(filename, "wb") do |csv|
     @students.each do |student|
-      student_data = [student[:name], student[:cohort], student[:country_of_birth],
-                    student[:height]]
-      csv_line = student_data.join(",")
-      file.puts csv_line
+      csv << [student[:name], student[:cohort], student[:country_of_birth],
+                      student[:height]]
     end
   end
   puts "#{filename} has been saved.."
+end
+
+def file_empty(filename) # default filename if empty
+  if filename.empty?
+    return "students.csv"
+  else
+    return filename
+  end
 end
 
 def get_argument
